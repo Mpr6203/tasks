@@ -1,66 +1,65 @@
-console.log('welcome to the game');
-
-let i = 1;
-
-// console.log(secretNum) // temoporal dead zone, the variable is being accessed before declaration
-
-let secretNum = Math.floor(Math.random() * 10) + 1;
-console.log(secretNum)
+(function () {
+    console.log("Welcome to the game");
+})();
 
 
-for(let i = 1; i<=3; i++){
+// TDZ Example
+// console.log(secretNum);
 
-    let userGuess = takeInput(i) // example of hoisting, function defintion are used here and it works because function declarations are hoisted.
+function outer() {
 
-    let guessStatus = checkGuess(userGuess)
+    let secretNum = Math.floor(Math.random() * 10) + 1;
 
-    if(guessStatus){
-        console.log('game over! refresh to try again')
+    return () => secretNum; // closure + arrow function
+}
+
+const secret = outer();
+
+
+// Hoisting Example
+// takeInput() is used before declaration
+
+for (let i = 1; i <= 3; i++) {
+
+    let userGuess = takeInput(i);
+
+    let result = checkGuess(userGuess, secret());
+
+    if (result) {
+        console.log("Game over! You won!");
         break;
     }
-    
+
+    if (i === 3) {
+        console.log("Better luck next time!");
+    }
 }
 
 
-
-function checkGuess(userGuess){
-
-    let flag = false
+// Normal function
+function checkGuess(userGuess, secretNum) {
 
     if (userGuess === secretNum) {
-        console.log('correct');
-        flag = true
+        console.log("Correct!");
+        return true;
 
     } else if (userGuess < secretNum) {
-        console.log('too low');
+        console.log("Too low!");
 
     } else if (userGuess > secretNum) {
-        console.log('too high');
+        console.log("Too high!");
 
     } else {
-        console.log('enter valid number only');
+        console.log("Enter valid number only");
     }
 
-    return flag
-
-}
-
-function takeInput(attempt){
-
-    let message = `Attempt ${attempt}: Guess the secret number (1-10)`;
-
-    let userInput = Number(prompt(message));
-    
-    return userInput
-    
+    return false;
 }
 
 
+function takeInput(attempt) {
 
-
-
-
-
-
-
-
+    return Number(
+        prompt(`Attempt ${attempt}: Guess the secret number (1-10)`)
+    );
+}
